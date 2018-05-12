@@ -1,5 +1,3 @@
-export VAGRANT_HOME=/home/vagrant
-
 # Download vagrant box from file hosting site since vagrant cloud is extremely SLOW
 # wget <FILE_HOSTING_URL> -O package.box
 # vagrant box remove hobin/create-ctf-competition-template -f
@@ -33,20 +31,14 @@ END
 
 # Create vagrant-install.sh which will be executed inside the vagrant box
 tee vagrant-install.sh << END
-echo "VAGRANT_HOME"
-echo $VAGRANT_HOME
-echo "NEW_VAGRANT_HOME"
 export VAGRANT_HOME=/home/vagrant
-echo $VAGRANT_HOME
 
-chown -hR vagrant $VAGRANT_HOME
-chmod -R 755 $VAGRANT_HOME
-git clone https://github.com/KAIST-CS408E/HTTP-CTF.git $VAGRANT_HOME
+git clone https://github.com/KAIST-CS408E/HTTP-CTF.git
 
-sudo mv $VAGRANT_HOME/services $VAGRANT_HOME/HTTP-CTF/services
-pip install -r dashboard/requirements.txt
+sudo mv \$VAGRANT_HOME/services \$VAGRANT_HOME/HTTP-CTF/services
+pip install -r \$VAGRANT_HOME/HTTP-CTF/dashboard/requirements.txt
 
-tee $VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
+tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
 {
     "num_services": 5,
     "name": "Test CTF",
@@ -68,7 +60,7 @@ tee $VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
 }
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
+tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "http-1661e",
@@ -83,7 +75,7 @@ tee $VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
 }
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
+tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 {
     "api_secret": "YOUKNOWSOMETHINGYOUSUCK",
     "name": "CS408(E)_HTTP_CTF",
@@ -105,7 +97,7 @@ tee $VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 }
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/dashboard/static/js/firebase.init.js << END2
+tee \$VAGRANT_HOME/HTTP-CTF/dashboard/static/js/firebase.init.js << END2
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyDt1YJ0PuIc6Xz3KLm5Z6NJSgZPXH_ZXT0",
@@ -119,7 +111,7 @@ var config = {
 firebase.initializeApp(config);
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
+tee \$VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "http-1661e",
@@ -134,7 +126,7 @@ tee $VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
 }
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
+tee \$VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
 DEBUG = True
 MYSQL_DATABASE_USER = "root"
 MYSQL_DATABASE_PASSWORD = "http8804"
@@ -146,7 +138,7 @@ DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
 END2
 
-tee $VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
+tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
 DB_SECRET = 'YOUKNOWSOMETHINGYOUSUCK'
 END2
@@ -168,27 +160,28 @@ registry['notifications'] = [
 ]
 END2
 
-cd $VAGRANT_HOME/HTTP-CTF/container-creator/
+cd \$VAGRANT_HOME/HTTP-CTF/container-creator/
 sudo python create_containers.py -sl ../services -c example.json
 sudo python create_flag_dirs.py -c example.json
 
-cd $VAGRANT_HOME/HTTP-CTF/database
+cd \$VAGRANT_HOME/HTTP-CTF/database
 sudo python reset_db.py ../container-creator/output/Test\ CTF/initial_db_state.json
 
 sudo gitlab-ctl reconfigure
-cd $VAGRANT_HOME/HTTP-CTF/gitlab
+cd \$VAGRANT_HOME/HTTP-CTF/gitlab
 sudo gitlab-rails console production < gitlab-temp-passwd.sh
 python initialize.py -c ../container-creator/example.json
 
-cd $VAGRANT_HOME/HTTP-CTF/container-creator
+cd \$VAGRANT_HOME/HTTP-CTF/container-creator
+sudo docker login --username=root --password=temp_passwd localhost:5000
 sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass http8804
 
-cd $VAGRANT_HOME/HTTP-CTF/database
+cd \$VAGRANT_HOME/HTTP-CTF/database
 nohup python database_tornado.py &
 nohup python gamebot.py &
-cd $VAGRANT_HOME/HTTP-CTF/scorebot
+cd \$VAGRANT_HOME/HTTP-CTF/scorebot
 nohup python scorebot.py &
-cd $VAGRANT_HOME/HTTP-CTF/dashboard
+cd \$VAGRANT_HOME/HTTP-CTF/dashboard
 nohup python app.py &
 END
 
