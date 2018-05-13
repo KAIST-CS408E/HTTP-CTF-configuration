@@ -157,12 +157,12 @@ cd \$VAGRANT_HOME/HTTP-CTF/container-creator
 sudo docker login --username=root --password=temp_passwd localhost:5000
 sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass http8804
 cd \$VAGRANT_HOME/HTTP-CTF/database
-nohup python database_tornado.py &
-nohup python gamebot.py &
-cd \$VAGRANT_HOME/HTTP-CTF/scorebot
-nohup python scorebot.py &
+nohup sudo python database_tornado.py &
+nohup sudo python gamebot.py &
 cd \$VAGRANT_HOME/HTTP-CTF/dashboard
-nohup python app.py &
+nohup sudo python app.py &
+cd \$VAGRANT_HOME/HTTP-CTF/scorebot
+nohup sudo python scorebot.py &
 END
 
 # Load vagrant box
