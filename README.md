@@ -2,7 +2,7 @@
 > You need a file named `install.sh` and a directory named `services` to configure.
 ```
 # Download install.sh
-$ git clone https://github.com/KAIST-CS408E/HTTP-CTF-configuration.git && cd HTTP-CTF-configuration
+Go to https://cs408e-http.firebaseapp.com/ & Configure your own CTF
 
 # Download services
 $ git clone https://github.com/inctf/inctf-framework.git
@@ -10,6 +10,7 @@ $ mv inctf-framework/services .
 $ rm -rf inctf-framework
 
 # Configure
+// Locate the `install.sh` file and the `services` directory at a same directory
 $ sh install.sh
 ```
 
