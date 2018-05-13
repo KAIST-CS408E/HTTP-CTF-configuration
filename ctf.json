@@ -1,0 +1,29 @@
+{
+    "flag_storage_folder": "/flags",
+    "name": "Test CTF",
+    "containers_ports_start": 10000,
+    "sudo": true,
+    "teams": [
+        {
+            "namespace": "team1",
+            "name": "team1"
+        },
+        {
+            "namespace": "team2",
+            "name": "team2"
+        },
+        {
+            "namespace": "team3",
+            "name": "team3"
+        }
+    ],
+    "num_services": 5,
+    "services": [
+        "driller",
+        "poipoi",
+        "sillybox",
+        "tattletale",
+        "temperature"
+    ],
+    "containers_host": "127.0.0.1"
+}

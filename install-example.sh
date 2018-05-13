@@ -7,7 +7,6 @@
 tee Vagrantfile << END
 Vagrant.configure(2) do |config|
   config.vm.box = "hobin/create-ctf-competition-template"
-
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
     v.cpus = 1
@@ -15,14 +14,11 @@ Vagrant.configure(2) do |config|
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
-
   config.vm.provision "file", source: "./vagrant-install.sh", destination: "~/vagrant-install.sh"
   config.vm.provision "file", source: "./services", destination: "~/services"
-
   config.vm.provision "shell" do |s|
     s.inline = "sh vagrant-install.sh"
   end
-
   config.vm.network "forwarded_port", guest: 3306, host: 13306 # Mysql
   config.vm.network "forwarded_port", guest: 5001, host: 15001 # Gitlab
   config.vm.network "forwarded_port", guest: 8000, host: 18000 # CTF Dashboard
@@ -32,12 +28,9 @@ END
 # Create vagrant-install.sh which will be executed inside the vagrant box
 tee vagrant-install.sh << END
 export VAGRANT_HOME=/home/vagrant
-
 git clone https://github.com/KAIST-CS408E/HTTP-CTF.git
-
 sudo mv \$VAGRANT_HOME/services \$VAGRANT_HOME/HTTP-CTF/services
 pip install -r \$VAGRANT_HOME/HTTP-CTF/dashboard/requirements.txt
-
 tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
 {
     "num_services": 5,
@@ -59,7 +52,6 @@ tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
     "containers_ports_start" : 10000
 }
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
 {
   "type": "service_account",
@@ -74,7 +66,6 @@ tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/http-1661e%40appspot.gserviceaccount.com"
 }
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 {
     "api_secret": "YOUKNOWSOMETHINGYOUSUCK",
@@ -96,7 +87,6 @@ tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
     }
 }
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/static/js/firebase.init.js << END2
 // Initialize Firebase
 var config = {
@@ -107,10 +97,8 @@ var config = {
     storageBucket: "http-1661e.appspot.com",
     messagingSenderId: "584427206756"
 };
-
 firebase.initializeApp(config);
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
 {
   "type": "service_account",
@@ -125,7 +113,6 @@ tee \$VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/http-1661e%40appspot.gserviceaccount.com"
 }
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
 DEBUG = True
 MYSQL_DATABASE_USER = "root"
@@ -137,12 +124,10 @@ DOCKER_DISTRIBUTION_PASS = "http8804"
 DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
 END2
-
 tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
 DB_SECRET = 'YOUKNOWSOMETHINGYOUSUCK'
 END2
-
 sudo tee /etc/gitlab/gitlab.rb << END2
 external_url 'http://localhost:5001'
 registry_external_url 'http://localhost:4567'
@@ -159,23 +144,18 @@ registry['notifications'] = [
   }
 ]
 END2
-
 cd \$VAGRANT_HOME/HTTP-CTF/container-creator/
 sudo python create_containers.py -sl ../services -c example.json
 sudo python create_flag_dirs.py -c example.json
-
 cd \$VAGRANT_HOME/HTTP-CTF/database
 sudo python reset_db.py ../container-creator/output/Test\ CTF/initial_db_state.json
-
 sudo gitlab-ctl reconfigure
 cd \$VAGRANT_HOME/HTTP-CTF/gitlab
 sudo gitlab-rails console production < gitlab-temp-passwd.sh
 python initialize.py -c ../container-creator/example.json
-
 cd \$VAGRANT_HOME/HTTP-CTF/container-creator
 sudo docker login --username=root --password=temp_passwd localhost:5000
 sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass http8804
-
 cd \$VAGRANT_HOME/HTTP-CTF/database
 nohup python database_tornado.py &
 nohup python gamebot.py &
@@ -191,4 +171,3 @@ vagrant up
 
 # Connect to the vagrant box. You should connected to it to forward ports.
 vagrant ssh
-
