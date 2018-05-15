@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
   config.vm.box = "hobin/create-ctf-competition-template"
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
-    v.cpus = 1
+    v.cpus = 2
     v.customize ["modifyvm", :id, "--ioapic", "on"]
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
@@ -28,65 +28,49 @@ END
 # Create vagrant-install.sh which will be executed inside the vagrant box
 tee vagrant-install.sh << END
 export VAGRANT_HOME=/home/vagrant
+
 git clone https://github.com/KAIST-CS408E/HTTP-CTF.git
 sudo mv \$VAGRANT_HOME/services \$VAGRANT_HOME/HTTP-CTF/services
 pip install -r \$VAGRANT_HOME/HTTP-CTF/dashboard/requirements.txt
+
 tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
 {
     "num_services": 5,
-    "name": "Test CTF",
-    "services": ["driller", "poipoi", "sillybox", "tattletale", "temperature"],
+    "name": "Awesome CTF",
+    "services": ["driller","poipoi","sillybox","tattletale","temperature"],
     "sudo": true,
-    "teams": [
-        {
-            "name": "team1",
-            "namespace": "team1"
-        },
-        {
-            "name": "team2",
-            "namespace": "team2"
-        }
-    ],
+    "teams": [{"name":"team1","namespace":"team1"},{"name":"team2","namespace":"team2"},{"name":"team3","namespace":"team3"},{"name":"team4","namespace":"team4"}],
     "flag_storage_folder": "/flags",
     "containers_host": "127.0.0.1",
     "containers_ports_start" : 10000
 }
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "http-1661e",
-  "private_key_id": "ffe83cb140ac1650fcd3d470cad6b9dedfa8ab9a",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC26DetPe6e2pKh\nVm5irxT8jJuHaZiugzwzK2b9q4in8kvsqsl6e/L49vP8O3B/PCfhoxxcT/2z+Blw\nf6PL1/BAZ1oAnvSOVTbF2HCrRrjUeN/pt3Fijv9HGb+q6ZDLjF5vm7fzt2nfu8bv\nQxJeZYEh75wyllOyOpkG3wvgliq5WUjR0VDBvkFJ3iXIeXFSPkSC5ZTW4cBiapuy\nl0dDzbO2iVLgKwSMGmI0JtPiFW21RRM8forHXKDUPYjZo/PhWl6mMI6FNHMRdMZP\nxiqgaTV4kIdl14VtlxYc9X9b6WYpGacxArS6pgoSlkfKLyefvWauCCa/eHUwOGGG\nf46CWSd3AgMBAAECggEAUS4lFAOyZpgNT4Vcjfk2X9cKaqIQDZiavf1MA1fAWgY8\n84hjzzS3RQ/af39kMVyiOM/b1Q79xARgSiGkseMgM32LoU3rrkac/lfPvf0wKMGT\nZBiyvvNH0ydW/gUXanhdK70Z+pZT6+TcaTJEM1hq5YSDN6Kn+Clw5O9XRrFvuf5o\nwjEjJavYDzEH6mX6SSUK5KX4eyLBfqEh2+C16lPsq5u+72OS8AWtwT4B/1ReuM2K\n7SdMaLPZzGgTnmIk9C4Kwi+fyddE5wH4wlFXSwW4fVLIIot0qzTa0PTqSzGTtMFt\n4UZkRom18gWV+bWIdAFijy+fN6eQ3yzhFpXvQNvtqQKBgQD0gOux7Yxniz/eW9Lx\nYBzU64PnYSKse+4D31cKtGlSEQ9lwKEG5pelikrlSzz/hyjipaNVbdnEIQ9y+wCk\nu4ocorCFyJ6VX3OSlynRvHyxrhKXGydBva+S8dj1rEa2BIjcYnMmB1whhH5DokUB\nki7NydJythBuJ6A8fO4Wp95EKQKBgQC/gdzG3LATy7+lrN9ZMr2Q3Kj6XegexUd/\nHcBEWURmBAxqJkNPrhqXiFwtss62rnZHkAm0JWcC4GRbVQkv23C/5tBvqR8Vy4mf\n3ZwAxW2d9eDu2ZOuYW8j9eO8+R7wAAyGVCLTG2MuRBcOlAEisMzLJiwCgRovv9oB\nP4/28TCCnwKBgAtXb5dxTXIAI5ZM7BwGOVAnHJc/Cjy2AvRrB76XX8tOv0gZB18q\nkx46q/623r17p4nb5RexYMiYP/81ZXI+wMlTQpzyEWkcZGAIYwg3lhEn4fTgbZG/\nGsXWMhozQ5Rt4WtXpb+916g2XSUGAe1wunsRQZHQoDJ75BLqOKEUaFsBAoGARHrg\ngq/purpyBoFhwJi3VrTBK/4mgdJTta3i0c4F+mDaO58BFN4SHjuhkqnM52BNZVup\nTKTPSCULXelzhox2rfiQck1Mk1OcG/F31oLCpuiEjYR6HbIztu03iZyfpnyt/d7a\nMRkrByFMCWd9XHVSVhaJSD/4KDj3cNjU1x36FcsCgYEA4mzY1CsVRrobvEudlX5O\nbZp9lIBcHq/sCQjeD5Mieknmhi2Aqdh2Q0MkZqMq+uLz556J+T2hKTxWFBCWetlg\nZW0fe4eGH771l2qmBZQbK0SjhQMLOVz1UHg1fYZbOtI09famD2RKI70CyWCMjacr\n9i3rUHoEGgEY1nCWu7DtE5U=\n-----END PRIVATE KEY-----\n",
-  "client_email": "http-1661e@appspot.gserviceaccount.com",
-  "client_id": "103491681279373200481",
+  "private_key_id": "8932b53516590f13928ad4501177f953ed86d8ff",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBQTDKmR8YiPEd\nMM2K3nRBdjsydhwemrOcSfRsInX6YPe0qnoSuGoXRRmafCGk1rXg5MbOummuw3Ou\nPFp3pizHuLK55SqOP6LhjhGOF7vswQpKX+ncnuziLmft3IVMf04ICJuK+Y24Lt6m\n9OnlgnWOwqN24KGEpXTsfcl4/cKaKKZJhuJ2tMf0ChxHhR/EKFOFnN4/hRfTROiX\nBGK2RQSutIUDG2YT1idKWJCR3P/P2C6z0ZIp2qtUDrFwUBXPSnCY5PFAJLj9stFS\nhukXZZxlculzBCsNI7mri3kxVZvpgFhoMK1XvgfKx6lkhD5yoeK0ay6zv1WVpbY6\nEx6X+Z3JAgMBAAECggEABLA+J2ojK/NAO0EF+Y33pCdtcfuAJ49sAa6LInehulpx\neVWkoBvkf1jxhog8q40Qd6AWln5wBi8EeVLfmdUYnhtOuGMVNFiE9858gfX03Oka\n2hlSg9lWCKTk0quFud3W9iuu9LEPesCQrbGrKNfl3iSTdpS7omt+XHxEP9N940Nu\nl06FPobulpwpbBq5KUdaW+3L9GJB+Vk9fk4My5OZK8ImyLBW/GvQcVjvWQTF7b/n\n1qqzNLv7dYv5DxO477iVDrZlQlWlOEItkBydIMXkfUv7mfPiVIBR2y3BaBOF/0NU\nM4x1VBQOEVs2VI8I6Q1b5RNc9ubp3bnWVipce0RAMQKBgQD456NBtLibgWYbDRD/\nOsqq4S5su98fXDiU4lSLvoZNB9ymMP3wfXK38lt10AgQkPszzJc+6ibgdCwtT1fh\ne58vcOoAg8/R9oPdEq9r6OfoGAQkjIcFP36UMmsW6qcPb1qk5CXdl3qAfKtGKdov\nMPm0Z5kSB8cM4Jq8u/fTEFCaEQKBgQDGw3NGUNw27v6RaR+MDsfpA7l8gfhxuqUQ\nbgDD0hemNjz/kK2Miwkp2uWBVAzTvGXHIibGtDXG/gE2PRZyBDGgadx5ROJJq09R\nsjfNP7dBwNWw/g1qHfcYyzeYjpkD4yycPGZ//cMBVPLxvzYJT9l/tUggUaLB90XM\n6ZHEtcJQOQKBgQCAgL6VjqL8jdrUPnO3AXhernEUbA4ul6MSoqL5nryhilyNZJ/G\nCE4wz6wOb/+p5d/7BzZSofq+SNwB7IO3guZVTNtStrqVcMr1WM8+S/lmpveEkxSm\nTfigtEL7itwDKP9IQA2YkLsLGNIoIDVnxcY1MIMjfuZyLIdWx0iULEkgsQKBgEKt\nVGFVRNqEyA89paCVYMixQCsdapu0UiU10bnfI6HVdhcBkMah6ZwJ243MBVWOUNJB\niaKE17l+gieQzJPJBmDawmRIEGVIO56bW47V/gLnzofGYfekP70ohuj9hSVBszhi\nJrxvA1jSB4HDdDwhdkQaKyz0VdYdvmOkQwsrMhk5AoGACYqRxCAomKgTV++1gfug\nhq5DBVwZJSQ01EgrasDO+ZojlTskYgBePwz5exO7KhUyIgg/alVshMMxr/BH2jeM\ngZwlqvbtuVCOLgXaT84tRgAwHu8ssgo1silEBOu/FU3jSqpVxyfFcwtmSNCk+otR\nWS5kk3Buf1ywotBFRmko4ug=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ryz10@http-1661e.iam.gserviceaccount.com",
+  "client_id": "112948171011989343622",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://accounts.google.com/o/oauth2/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/http-1661e%40appspot.gserviceaccount.com"
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ryz10%40http-1661e.iam.gserviceaccount.com"
 }
+
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 {
     "api_secret": "YOUKNOWSOMETHINGYOUSUCK",
     "name": "CS408(E)_HTTP_CTF",
     "api_base_url": "http://127.0.0.1:4000",
-    "teams": {
-        "1": {
-            "hashed_password": "hi",
-            "name": "Hi"
-        },
-        "2": {
-            "hashed_password": "hi",
-            "name": "Sheep"
-        },
-        "3": {
-            "hashed_password": "asdf",
-            "name": "asdf"
-        }
-    }
+    "teams": {"0":{"name":"team1","hashed_password":"w4ex4a6zz5xe2hp0"},"1":{"name":"team2","hashed_password":"wkjtzeuk2bgzslhr"},"2":{"name":"team3","hashed_password":"d9ov9uwf6k3bnxqy"},"3":{"name":"team4","hashed_password":"7wjusqda94nvjro6"}}
 }
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/static/js/firebase.init.js << END2
 // Initialize Firebase
 var config = {
@@ -96,23 +80,26 @@ var config = {
     projectId: "http-1661e",
     storageBucket: "http-1661e.appspot.com",
     messagingSenderId: "584427206756"
-};
+  };
 firebase.initializeApp(config);
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "http-1661e",
-  "private_key_id": "ffe83cb140ac1650fcd3d470cad6b9dedfa8ab9a",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC26DetPe6e2pKh\nVm5irxT8jJuHaZiugzwzK2b9q4in8kvsqsl6e/L49vP8O3B/PCfhoxxcT/2z+Blw\nf6PL1/BAZ1oAnvSOVTbF2HCrRrjUeN/pt3Fijv9HGb+q6ZDLjF5vm7fzt2nfu8bv\nQxJeZYEh75wyllOyOpkG3wvgliq5WUjR0VDBvkFJ3iXIeXFSPkSC5ZTW4cBiapuy\nl0dDzbO2iVLgKwSMGmI0JtPiFW21RRM8forHXKDUPYjZo/PhWl6mMI6FNHMRdMZP\nxiqgaTV4kIdl14VtlxYc9X9b6WYpGacxArS6pgoSlkfKLyefvWauCCa/eHUwOGGG\nf46CWSd3AgMBAAECggEAUS4lFAOyZpgNT4Vcjfk2X9cKaqIQDZiavf1MA1fAWgY8\n84hjzzS3RQ/af39kMVyiOM/b1Q79xARgSiGkseMgM32LoU3rrkac/lfPvf0wKMGT\nZBiyvvNH0ydW/gUXanhdK70Z+pZT6+TcaTJEM1hq5YSDN6Kn+Clw5O9XRrFvuf5o\nwjEjJavYDzEH6mX6SSUK5KX4eyLBfqEh2+C16lPsq5u+72OS8AWtwT4B/1ReuM2K\n7SdMaLPZzGgTnmIk9C4Kwi+fyddE5wH4wlFXSwW4fVLIIot0qzTa0PTqSzGTtMFt\n4UZkRom18gWV+bWIdAFijy+fN6eQ3yzhFpXvQNvtqQKBgQD0gOux7Yxniz/eW9Lx\nYBzU64PnYSKse+4D31cKtGlSEQ9lwKEG5pelikrlSzz/hyjipaNVbdnEIQ9y+wCk\nu4ocorCFyJ6VX3OSlynRvHyxrhKXGydBva+S8dj1rEa2BIjcYnMmB1whhH5DokUB\nki7NydJythBuJ6A8fO4Wp95EKQKBgQC/gdzG3LATy7+lrN9ZMr2Q3Kj6XegexUd/\nHcBEWURmBAxqJkNPrhqXiFwtss62rnZHkAm0JWcC4GRbVQkv23C/5tBvqR8Vy4mf\n3ZwAxW2d9eDu2ZOuYW8j9eO8+R7wAAyGVCLTG2MuRBcOlAEisMzLJiwCgRovv9oB\nP4/28TCCnwKBgAtXb5dxTXIAI5ZM7BwGOVAnHJc/Cjy2AvRrB76XX8tOv0gZB18q\nkx46q/623r17p4nb5RexYMiYP/81ZXI+wMlTQpzyEWkcZGAIYwg3lhEn4fTgbZG/\nGsXWMhozQ5Rt4WtXpb+916g2XSUGAe1wunsRQZHQoDJ75BLqOKEUaFsBAoGARHrg\ngq/purpyBoFhwJi3VrTBK/4mgdJTta3i0c4F+mDaO58BFN4SHjuhkqnM52BNZVup\nTKTPSCULXelzhox2rfiQck1Mk1OcG/F31oLCpuiEjYR6HbIztu03iZyfpnyt/d7a\nMRkrByFMCWd9XHVSVhaJSD/4KDj3cNjU1x36FcsCgYEA4mzY1CsVRrobvEudlX5O\nbZp9lIBcHq/sCQjeD5Mieknmhi2Aqdh2Q0MkZqMq+uLz556J+T2hKTxWFBCWetlg\nZW0fe4eGH771l2qmBZQbK0SjhQMLOVz1UHg1fYZbOtI09famD2RKI70CyWCMjacr\n9i3rUHoEGgEY1nCWu7DtE5U=\n-----END PRIVATE KEY-----\n",
-  "client_email": "http-1661e@appspot.gserviceaccount.com",
-  "client_id": "103491681279373200481",
+  "private_key_id": "8932b53516590f13928ad4501177f953ed86d8ff",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBQTDKmR8YiPEd\nMM2K3nRBdjsydhwemrOcSfRsInX6YPe0qnoSuGoXRRmafCGk1rXg5MbOummuw3Ou\nPFp3pizHuLK55SqOP6LhjhGOF7vswQpKX+ncnuziLmft3IVMf04ICJuK+Y24Lt6m\n9OnlgnWOwqN24KGEpXTsfcl4/cKaKKZJhuJ2tMf0ChxHhR/EKFOFnN4/hRfTROiX\nBGK2RQSutIUDG2YT1idKWJCR3P/P2C6z0ZIp2qtUDrFwUBXPSnCY5PFAJLj9stFS\nhukXZZxlculzBCsNI7mri3kxVZvpgFhoMK1XvgfKx6lkhD5yoeK0ay6zv1WVpbY6\nEx6X+Z3JAgMBAAECggEABLA+J2ojK/NAO0EF+Y33pCdtcfuAJ49sAa6LInehulpx\neVWkoBvkf1jxhog8q40Qd6AWln5wBi8EeVLfmdUYnhtOuGMVNFiE9858gfX03Oka\n2hlSg9lWCKTk0quFud3W9iuu9LEPesCQrbGrKNfl3iSTdpS7omt+XHxEP9N940Nu\nl06FPobulpwpbBq5KUdaW+3L9GJB+Vk9fk4My5OZK8ImyLBW/GvQcVjvWQTF7b/n\n1qqzNLv7dYv5DxO477iVDrZlQlWlOEItkBydIMXkfUv7mfPiVIBR2y3BaBOF/0NU\nM4x1VBQOEVs2VI8I6Q1b5RNc9ubp3bnWVipce0RAMQKBgQD456NBtLibgWYbDRD/\nOsqq4S5su98fXDiU4lSLvoZNB9ymMP3wfXK38lt10AgQkPszzJc+6ibgdCwtT1fh\ne58vcOoAg8/R9oPdEq9r6OfoGAQkjIcFP36UMmsW6qcPb1qk5CXdl3qAfKtGKdov\nMPm0Z5kSB8cM4Jq8u/fTEFCaEQKBgQDGw3NGUNw27v6RaR+MDsfpA7l8gfhxuqUQ\nbgDD0hemNjz/kK2Miwkp2uWBVAzTvGXHIibGtDXG/gE2PRZyBDGgadx5ROJJq09R\nsjfNP7dBwNWw/g1qHfcYyzeYjpkD4yycPGZ//cMBVPLxvzYJT9l/tUggUaLB90XM\n6ZHEtcJQOQKBgQCAgL6VjqL8jdrUPnO3AXhernEUbA4ul6MSoqL5nryhilyNZJ/G\nCE4wz6wOb/+p5d/7BzZSofq+SNwB7IO3guZVTNtStrqVcMr1WM8+S/lmpveEkxSm\nTfigtEL7itwDKP9IQA2YkLsLGNIoIDVnxcY1MIMjfuZyLIdWx0iULEkgsQKBgEKt\nVGFVRNqEyA89paCVYMixQCsdapu0UiU10bnfI6HVdhcBkMah6ZwJ243MBVWOUNJB\niaKE17l+gieQzJPJBmDawmRIEGVIO56bW47V/gLnzofGYfekP70ohuj9hSVBszhi\nJrxvA1jSB4HDdDwhdkQaKyz0VdYdvmOkQwsrMhk5AoGACYqRxCAomKgTV++1gfug\nhq5DBVwZJSQ01EgrasDO+ZojlTskYgBePwz5exO7KhUyIgg/alVshMMxr/BH2jeM\ngZwlqvbtuVCOLgXaT84tRgAwHu8ssgo1silEBOu/FU3jSqpVxyfFcwtmSNCk+otR\nWS5kk3Buf1ywotBFRmko4ug=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ryz10@http-1661e.iam.gserviceaccount.com",
+  "client_id": "112948171011989343622",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://accounts.google.com/o/oauth2/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/http-1661e%40appspot.gserviceaccount.com"
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ryz10%40http-1661e.iam.gserviceaccount.com"
 }
+
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
 DEBUG = True
 MYSQL_DATABASE_USER = "root"
@@ -123,7 +110,9 @@ DOCKER_DISTRIBUTION_USER = "root"
 DOCKER_DISTRIBUTION_PASS = "http8804"
 DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
+TICK_TIME_IN_SECONDS=600
 END2
+
 tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
 DB_SECRET = 'YOUKNOWSOMETHINGYOUSUCK'
@@ -144,18 +133,23 @@ registry['notifications'] = [
   }
 ]
 END2
+
 cd \$VAGRANT_HOME/HTTP-CTF/container-creator/
 sudo python create_containers.py -sl ../services -c example.json
 sudo python create_flag_dirs.py -c example.json
+
 cd \$VAGRANT_HOME/HTTP-CTF/database
-sudo python reset_db.py ../container-creator/output/Test\ CTF/initial_db_state.json
+sudo python reset_db.py ../container-creator/output/Awesome CTF/initial_db_state.json
 sudo gitlab-ctl reconfigure
+
 cd \$VAGRANT_HOME/HTTP-CTF/gitlab
 sudo gitlab-rails console production < gitlab-temp-passwd.sh
 python initialize.py -c ../container-creator/example.json
+
 cd \$VAGRANT_HOME/HTTP-CTF/container-creator
 sudo docker login --username=root --password=temp_passwd localhost:5000
 sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass http8804
+
 cd \$VAGRANT_HOME/HTTP-CTF/database
 nohup sudo python database_tornado.py &
 nohup sudo python gamebot.py &
