@@ -2,6 +2,7 @@
     "name" : "sillybox",
     "authors" : ["Jacopo Corbetta <jacopo@cs.ucsb.edu>"],
     "port" : 4669,
+    "image": "i386/ubuntu:14.04",
     "user": "sillybox",
     "workdir": "/var/ictf/services/sillybox",
     "command": "/ictf/services/sillybox/sillybox_spawner",
