@@ -10,15 +10,10 @@ Go to https://www.vagrantup.com/downloads.html and install Vagrant using proper 
 > We created a vagrant box that all the necessary tools are installed. Let's download it and start from here.
 
 ```
-$ vagrant box add hobin/create-ctf-competition-template
+$ wget https://raw.githubusercontent.com/KAIST-CS408E/HTTP-CTF-configuration/master/gdown.pl\?token\=AQ4fCFft6ua68UHeVrSwGmaP2TYiGoQKks5bBnpEwA%3D%3D -O gdown.pl
+$ ./gdown.pl https://drive.google.com/file/d/1D2w5nSmDH2xcvAJ8xWbBoA4tuK9WgiXc/view package.box
+$ vagrant box add hobin/create-ctf-competition-template ./package.box
 ```
-
-* **NOTE: [Downloading vagrant box is extremely slow...](https://github.com/hashicorp/vagrant/issues/5319)**
-
-    You can download `package.box` in [here](https://drive.google.com/open?id=15ilWF6dkjt6v13dCsFX5Em5jIQ2CrUhC), and
-    ```
-    $ vagrant box add hobin/create-ctf-competition-template ./package.box
-    ```
 
 
 ## Step 3: Prepare services
