@@ -43,7 +43,8 @@ tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
     "teams": {{TEAM_NAMES}},
     "flag_storage_folder": "/flags",
     "containers_host": "127.0.0.1",
-    "containers_ports_start" : 10000
+    "containers_ports_start" : 10000,
+	"round" : {{N_ROUND}}
 }
 END2
 
@@ -83,6 +84,7 @@ DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
 TICK_TIME_IN_SECONDS = {{N_ROUND_TICK}}
 DB_SECRET = "{{API_SECRET}}"
+GAME_ROUND = {{N_ROUND}}
 END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
