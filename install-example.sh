@@ -19,7 +19,6 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell" do |s|
     s.inline = "sh vagrant-install.sh"
   end
-  config.vm.network "forwarded_port", guest: 3306, host: 13306 # Mysql
   config.vm.network "forwarded_port", guest: 4567, host: 14567 # Docker Registry
   config.vm.network "forwarded_port", guest: 5001, host: 15001 # Gitlab
   config.vm.network "forwarded_port", guest: 8000, host: 18000 # CTF Dashboard
@@ -40,10 +39,11 @@ tee \$VAGRANT_HOME/HTTP-CTF/container-creator/example.json << END2
     "name": "Awesome-CTF",
     "services": ["poipoi","sillybox","tattletale"],
     "sudo": true,
-    "teams": [{"name":"team1","namespace":"team1"},{"name":"team2","namespace":"team2"},{"name":"team3","namespace":"team3"},{"name":"team4","namespace":"team4"},{"name":"team5","namespace":"team5"},{"name":"team6","namespace":"team6"}],
+    "teams": [{"name":"team1","namespace":"team1"},{"name":"team2","namespace":"team2"},{"name":"team3","namespace":"team3"},{"name":"team4","namespace":"team4"},{"name":"team5","namespace":"team5"}],
     "flag_storage_folder": "/flags",
     "containers_host": "127.0.0.1",
-    "containers_ports_start" : 10000
+    "containers_ports_start" : 10000,
+    "round" : 200
 }
 END2
 
@@ -51,8 +51,8 @@ tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "awesome-ctf",
-  "private_key_id": "b315905ef1f9c3f37ea74c80b36dac2d4d3deac1",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDAro50oKNsB2q1\nrP5Pgm+oeeitv+pm2o2+x/CS/KQ9blUQ5oJtK867fICjg484mF+Y9CIa/CE+5lPE\n/QYRYKRs9baj65bjTCefjs2roWm69H0xzFTFFGqlT7TYV7DCP6QuFsYH1kG57ER9\nLXugHdEVg8sJNUk9QEDprqJgQoFsKQPznKMLpxeLRf960Kk9LT1sF8tthhlvSK8F\nWQGXnq+RyKVxEHiiZjqqgqgZfxhwdkO+ZtfKymM/xhQ0fHvHX417Ctd7wFc/mJzf\neNaEjVOW+bpAlouxuM/K12+yKCJdCj7LK0RwvXempold/ZfiBOGwjY4KD9yK7WAM\nKJsFhPnFAgMBAAECggEAAN5JF4g89AEHpLQvQyFIYD3Z/+FI0y4ts4K2g9rEPmIC\nKp6YLqei90VY6rr+sIiAfWvUcXGBoM+6PA8tVZiMuTbCul762IU2zMCOnw/FvqGj\nMFuY9ha6gqryn14NuYLO33s0/do/4YWCrXdMV5GWLNDRgp/sAPZJQ7pvCjhInSch\ngb2CyLzqBH+rJDPP7YoF2wkGvt7CbtfcvVLKs1ILDWuH7DXfv+2QO3AYd4LXbBJ+\n6np/fPL20ItA7boFZXnGvTjVxDwHtWx/vpvZky4LHEtM3Ox15hnZpoll/J7NKRBQ\nY//JNcz4VTn+IjZ1Ss3LCmi3dz5f5QfSfysk+0ohUQKBgQDnz9SAVCI63Tb7oLdv\nFTPiK57gofF0DWGKXZYfHn7ha3pU7OYM7WicyVWI3MDkxFRLhTHPD4JOVs/kk3WT\nnAcuxd95+M1ds0aXgM3xbiHm1wCE6l6DqrkhrLinKHfB/uVo8JX8M/7r6uRmGpJb\nQIUig/f6/4KjtINzSTSf8xgMeQKBgQDUyXwEPeAy+rBNGUwrVB8bRz2/HHMO9RNH\nVw7R7BaV3tkZyux6fP/Pdb0oZ2YCv7T/mQ5jPZ67Hg+9w2VsmMabcuGF7F8lhPw5\n+nIX+ZYYito4vm+lKm6ud8TT4nvnakkdiw/bRnpEdAcHQr+QrFjJ2YqonKMKTyM7\nj/j/Da3srQKBgCiGU67vhmBmBdOtgAPiYASc/ZRlmzFfmXq366ObEDFWObeZBoqi\nAlTOea6IcQxNKjNdoJyDKJOLZ6KdCMP6VeMeYngPP8+upJudv+MCDtktIwEZe9Zm\nxSCW8lz+nRkD95UF4iKJ8HnLwYv7/zQGrn+fNH3jpzH5P7WqyZFgzQZ5AoGAQEBa\npzk70ojp5U3nNwoennEDjwp7H6AW4yrBedes9jIlIempQE8wOyeVJ3cZUWkrsSY5\nNvQrUtr/68/tdz4mclfdC0BVdpHSS3t5Kg4eKWj7/bhbI+dNJndZwpUXzsfELhyI\nfDCqyLK0UJfyGjBAWyrJ+KHbhUhiHiEaEYHC670CgYAbGNoToOL7sTxRHGiWM/aU\nmC2G1uVv7ATj4Un62E9Ib6MFzKfs18D2i1rGhus3OFFICKuL74f1VAgpAAeYcuue\nwxNeF0Ap8Xez7HKlwlbAoIdACMBDbSLrow/1f8nBxYVYxhIB8J+aCALszPSleoIw\nfps5TGSX3eMs3818QNQb8A==\n-----END PRIVATE KEY-----\n",
+  "private_key_id": "b117985cf3cff9037dc0cbdaecabb85437a29c35",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDUJmZaINK4L0TH\njNmW8OkL3MplPmUaGpFknaKA0sHgaovesj+ze/VvLjCh8q4INOQGLMC05dQjfS1+\nlQphi9sQR1vgJRXYyD6F78uBqhu/SbIXbdVUnj5f9AxibNBXGRoKr8Wg8MMWIHnK\n6JkH/LdTYlDZ6nZVyi/d7hJzIYX0+1wLphF3ojdtOoINLRdOVmF4UmMV3u04qdgs\nV4MoarFSqdqYpWCaW2c2xPXXy6a8Nlmp/lcVHnaePf9aup5+hE/y5b5Ajj7IB5ps\nGw0lcBM7HcKGTeM3kYGP6xJ5QRH0TmrUSu7Rquu2HH4JCevugqlMohkMKChNCD7u\nJKg3v0otAgMBAAECggEACPr+QxCphYfI7uX/dxbrm+QNqbYpj66nVyofwnJ+0oIF\ncpxQJgDjF0f4036d71WqRrijlsvgQbIbuD1cN5TfkC/1HXU7ii8FKE8tab0RsWZe\nHVpyqrT9e2Xmo9zcqjbBXTtVWlSBbZuwjCc46Hr7Cz12MHw2HUY9V5iPAu7cy+ny\ncD5Kl6UeZRblJSEEsLFDJrWqogvk8upkpLDzmhQmrqrXhGmDu6c8emKDt5X4mng9\nUREnpBUC/POwpUZbrnrD1l11R+zNsvjctGQHucFyxu/zy3pFpbTUEJKK4jNSexGh\nLAQkAq52v3aMb5pmal0Cw2A2SZerdodvp+6BQYzy4QKBgQD+KRXrRslQ3iUls0T0\nG6Rl2r7Gc5mubF7xBQOcSVuyKfdLtQ2jMTKztxMkDpAQ9aZ5J2kIWkQzeCDcxO8D\nnVTJtktSpZ2nDbMr/J1NejzRKbmWeifbynSMTYOeduhxuzau2D56q0kRO/PFHcu9\nMafIXjZvPImCbqXxldhd6lBGRwKBgQDVr3nnodKE/dI434frGV/ZaehNQpnn4RsK\ngkTyPT7+PiEhnlm3MTClPazouSoDpgCZWxswY7kLw85I4kCl/62hCWHQksqBmhAN\naEmHcJuq8TtRTGNxpoxZPdtyGFSVtU8ztlROHfOP3JeroysW68kEKpkyoFDU9ARj\nDs8sr7OB6wKBgQDzxWBamzg3sfmbIUh/gYu6jYXxPasnGpYtQYvm+I1UYt/n4y3D\nWkqxCGT5bmZLffE/vscE1d8YJp4OYWyF4P8TwR6ZlHOTaJZzGAWf7CAs1YJFi8Bz\nFMmYUDhvYskrXE7kgE/cxDB+sSvr4doqClhM2+AF7OBPE+Vhw0EVQsnfvQKBgCPB\nRu6hPy6Noh1uGboW9tjURdCXslUAb5vkjFDUOrQkBTsw2eYzTuZ3WXVfdk5B+puu\niPAh35a+XsgHQ7YDADSP81QJG+Vvt/vmVVdaWlHSJ5DE7WbY7WcJWKzQsWaTffsz\nKQwhKt4JlT9dABrHvUz7K8My3BOl+Q3yLmxVwf2dAoGBANg95E0D9B4ZhZOZtbKN\najMmU0a9vcQP0IG5/GSmBbboJ212r73zCm/IJDYeClW1vC3bfQjdrTRKPxqNpgYV\ngDjcGJEk5Hk4h2gba+9L4L0ecWSgKmfzk407fMYUUkjFfzBjLMnk0+5broI7YzPz\n01nYxQqDr/iJ7JSpJ8leac5d\n-----END PRIVATE KEY-----\n",
   "client_email": "firebase-adminsdk-qmrxe@awesome-ctf.iam.gserviceaccount.com",
   "client_id": "102066288490605912437",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -65,10 +65,10 @@ END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 {
-    "api_secret": "939oawae813bcg8h",
+    "api_secret": "8qgq4c34i51gnm17",
     "name": "CS408(E)_HTTP_CTF",
     "api_base_url": "http://127.0.0.1:4000",
-    "teams": {"0":{"name":"team1","hashed_password":"04qckvfk0fcszl9m"},"1":{"name":"team2","hashed_password":"v40clpd6qvm6m269"},"2":{"name":"team3","hashed_password":"38ie9omvsbnoa74w"},"3":{"name":"team4","hashed_password":"s51tmsgq1sdoegbi"},"4":{"name":"team5","hashed_password":"k1wtsyhguwju33jt"},"5":{"name":"team6","hashed_password":"ernwi7i1f8lhw2tq"}}
+    "teams": {"0":{"name":"team1","hashed_password":"h2pkp0gs9338kp1b"},"1":{"name":"team2","hashed_password":"1sx8yjkqz63stmgr"},"2":{"name":"team3","hashed_password":"h5t04gtxpsyzdzeo"},"3":{"name":"team4","hashed_password":"g8u5xgjp48fip42a"},"4":{"name":"team5","hashed_password":"cny3jiqazap2riad"}}
 }
 END2
 
@@ -89,8 +89,8 @@ tee \$VAGRANT_HOME/HTTP-CTF/database/config/firebaseConfig.json << END2
 {
   "type": "service_account",
   "project_id": "awesome-ctf",
-  "private_key_id": "b315905ef1f9c3f37ea74c80b36dac2d4d3deac1",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDAro50oKNsB2q1\nrP5Pgm+oeeitv+pm2o2+x/CS/KQ9blUQ5oJtK867fICjg484mF+Y9CIa/CE+5lPE\n/QYRYKRs9baj65bjTCefjs2roWm69H0xzFTFFGqlT7TYV7DCP6QuFsYH1kG57ER9\nLXugHdEVg8sJNUk9QEDprqJgQoFsKQPznKMLpxeLRf960Kk9LT1sF8tthhlvSK8F\nWQGXnq+RyKVxEHiiZjqqgqgZfxhwdkO+ZtfKymM/xhQ0fHvHX417Ctd7wFc/mJzf\neNaEjVOW+bpAlouxuM/K12+yKCJdCj7LK0RwvXempold/ZfiBOGwjY4KD9yK7WAM\nKJsFhPnFAgMBAAECggEAAN5JF4g89AEHpLQvQyFIYD3Z/+FI0y4ts4K2g9rEPmIC\nKp6YLqei90VY6rr+sIiAfWvUcXGBoM+6PA8tVZiMuTbCul762IU2zMCOnw/FvqGj\nMFuY9ha6gqryn14NuYLO33s0/do/4YWCrXdMV5GWLNDRgp/sAPZJQ7pvCjhInSch\ngb2CyLzqBH+rJDPP7YoF2wkGvt7CbtfcvVLKs1ILDWuH7DXfv+2QO3AYd4LXbBJ+\n6np/fPL20ItA7boFZXnGvTjVxDwHtWx/vpvZky4LHEtM3Ox15hnZpoll/J7NKRBQ\nY//JNcz4VTn+IjZ1Ss3LCmi3dz5f5QfSfysk+0ohUQKBgQDnz9SAVCI63Tb7oLdv\nFTPiK57gofF0DWGKXZYfHn7ha3pU7OYM7WicyVWI3MDkxFRLhTHPD4JOVs/kk3WT\nnAcuxd95+M1ds0aXgM3xbiHm1wCE6l6DqrkhrLinKHfB/uVo8JX8M/7r6uRmGpJb\nQIUig/f6/4KjtINzSTSf8xgMeQKBgQDUyXwEPeAy+rBNGUwrVB8bRz2/HHMO9RNH\nVw7R7BaV3tkZyux6fP/Pdb0oZ2YCv7T/mQ5jPZ67Hg+9w2VsmMabcuGF7F8lhPw5\n+nIX+ZYYito4vm+lKm6ud8TT4nvnakkdiw/bRnpEdAcHQr+QrFjJ2YqonKMKTyM7\nj/j/Da3srQKBgCiGU67vhmBmBdOtgAPiYASc/ZRlmzFfmXq366ObEDFWObeZBoqi\nAlTOea6IcQxNKjNdoJyDKJOLZ6KdCMP6VeMeYngPP8+upJudv+MCDtktIwEZe9Zm\nxSCW8lz+nRkD95UF4iKJ8HnLwYv7/zQGrn+fNH3jpzH5P7WqyZFgzQZ5AoGAQEBa\npzk70ojp5U3nNwoennEDjwp7H6AW4yrBedes9jIlIempQE8wOyeVJ3cZUWkrsSY5\nNvQrUtr/68/tdz4mclfdC0BVdpHSS3t5Kg4eKWj7/bhbI+dNJndZwpUXzsfELhyI\nfDCqyLK0UJfyGjBAWyrJ+KHbhUhiHiEaEYHC670CgYAbGNoToOL7sTxRHGiWM/aU\nmC2G1uVv7ATj4Un62E9Ib6MFzKfs18D2i1rGhus3OFFICKuL74f1VAgpAAeYcuue\nwxNeF0Ap8Xez7HKlwlbAoIdACMBDbSLrow/1f8nBxYVYxhIB8J+aCALszPSleoIw\nfps5TGSX3eMs3818QNQb8A==\n-----END PRIVATE KEY-----\n",
+  "private_key_id": "b117985cf3cff9037dc0cbdaecabb85437a29c35",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDUJmZaINK4L0TH\njNmW8OkL3MplPmUaGpFknaKA0sHgaovesj+ze/VvLjCh8q4INOQGLMC05dQjfS1+\nlQphi9sQR1vgJRXYyD6F78uBqhu/SbIXbdVUnj5f9AxibNBXGRoKr8Wg8MMWIHnK\n6JkH/LdTYlDZ6nZVyi/d7hJzIYX0+1wLphF3ojdtOoINLRdOVmF4UmMV3u04qdgs\nV4MoarFSqdqYpWCaW2c2xPXXy6a8Nlmp/lcVHnaePf9aup5+hE/y5b5Ajj7IB5ps\nGw0lcBM7HcKGTeM3kYGP6xJ5QRH0TmrUSu7Rquu2HH4JCevugqlMohkMKChNCD7u\nJKg3v0otAgMBAAECggEACPr+QxCphYfI7uX/dxbrm+QNqbYpj66nVyofwnJ+0oIF\ncpxQJgDjF0f4036d71WqRrijlsvgQbIbuD1cN5TfkC/1HXU7ii8FKE8tab0RsWZe\nHVpyqrT9e2Xmo9zcqjbBXTtVWlSBbZuwjCc46Hr7Cz12MHw2HUY9V5iPAu7cy+ny\ncD5Kl6UeZRblJSEEsLFDJrWqogvk8upkpLDzmhQmrqrXhGmDu6c8emKDt5X4mng9\nUREnpBUC/POwpUZbrnrD1l11R+zNsvjctGQHucFyxu/zy3pFpbTUEJKK4jNSexGh\nLAQkAq52v3aMb5pmal0Cw2A2SZerdodvp+6BQYzy4QKBgQD+KRXrRslQ3iUls0T0\nG6Rl2r7Gc5mubF7xBQOcSVuyKfdLtQ2jMTKztxMkDpAQ9aZ5J2kIWkQzeCDcxO8D\nnVTJtktSpZ2nDbMr/J1NejzRKbmWeifbynSMTYOeduhxuzau2D56q0kRO/PFHcu9\nMafIXjZvPImCbqXxldhd6lBGRwKBgQDVr3nnodKE/dI434frGV/ZaehNQpnn4RsK\ngkTyPT7+PiEhnlm3MTClPazouSoDpgCZWxswY7kLw85I4kCl/62hCWHQksqBmhAN\naEmHcJuq8TtRTGNxpoxZPdtyGFSVtU8ztlROHfOP3JeroysW68kEKpkyoFDU9ARj\nDs8sr7OB6wKBgQDzxWBamzg3sfmbIUh/gYu6jYXxPasnGpYtQYvm+I1UYt/n4y3D\nWkqxCGT5bmZLffE/vscE1d8YJp4OYWyF4P8TwR6ZlHOTaJZzGAWf7CAs1YJFi8Bz\nFMmYUDhvYskrXE7kgE/cxDB+sSvr4doqClhM2+AF7OBPE+Vhw0EVQsnfvQKBgCPB\nRu6hPy6Noh1uGboW9tjURdCXslUAb5vkjFDUOrQkBTsw2eYzTuZ3WXVfdk5B+puu\niPAh35a+XsgHQ7YDADSP81QJG+Vvt/vmVVdaWlHSJ5DE7WbY7WcJWKzQsWaTffsz\nKQwhKt4JlT9dABrHvUz7K8My3BOl+Q3yLmxVwf2dAoGBANg95E0D9B4ZhZOZtbKN\najMmU0a9vcQP0IG5/GSmBbboJ212r73zCm/IJDYeClW1vC3bfQjdrTRKPxqNpgYV\ngDjcGJEk5Hk4h2gba+9L4L0ecWSgKmfzk407fMYUUkjFfzBjLMnk0+5broI7YzPz\n01nYxQqDr/iJ7JSpJ8leac5d\n-----END PRIVATE KEY-----\n",
   "client_email": "firebase-adminsdk-qmrxe@awesome-ctf.iam.gserviceaccount.com",
   "client_id": "102066288490605912437",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -105,21 +105,21 @@ tee \$VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
 DEBUG = True
 MYSQL_DATABASE_USER = "root"
 MYSQL_DATABASE_INIT_PASSWORD = "http8804"
-MYSQL_DATABASE_PASSWORD = "hoiyjscetzmw260m"
+MYSQL_DATABASE_PASSWORD = "500fpgup1lieay72"
 MYSQL_DATABASE_DB = "ctf"
 DOCKER_DISTRIBUTION_SERVER = "localhost:5000"
 DOCKER_DISTRIBUTION_USER = "root"
 DOCKER_DISTRIBUTION_PASS = "http8804"
 DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
-TICK_TIME_IN_SECONDS = 100
-DB_SECRET = "939oawae813bcg8h"
+TICK_TIME_IN_SECONDS = 60
+DB_SECRET = "8qgq4c34i51gnm17"
 GAME_ROUND = 200
 END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
-DB_SECRET = '939oawae813bcg8h'
+DB_SECRET = '8qgq4c34i51gnm17'
 END2
 sudo tee /etc/gitlab/gitlab.rb << END2
 external_url 'http://localhost:5001'
@@ -132,7 +132,7 @@ registry['notifications'] = [
     'threshold' => 5,
     'backoff' => '2s',
     'headers' => {
-      'secret' => ['939oawae813bcg8h']
+      'secret' => ['8qgq4c34i51gnm17']
     }
   }
 ]
@@ -140,7 +140,8 @@ END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/gitlab/config.json << END2
 {
-    "teams": {"0":{"name":"team1","hashed_password":"04qckvfk0fcszl9m"},"1":{"name":"team2","hashed_password":"v40clpd6qvm6m269"},"2":{"name":"team3","hashed_password":"38ie9omvsbnoa74w"},"3":{"name":"team4","hashed_password":"s51tmsgq1sdoegbi"},"4":{"name":"team5","hashed_password":"k1wtsyhguwju33jt"},"5":{"name":"team6","hashed_password":"ernwi7i1f8lhw2tq"}}
+    "teams": {"0":{"name":"team1","hashed_password":"h2pkp0gs9338kp1b"},"1":{"name":"team2","hashed_password":"1sx8yjkqz63stmgr"},"2":{"name":"team3","hashed_password":"h5t04gtxpsyzdzeo"},"3":{"name":"team4","hashed_password":"g8u5xgjp48fip42a"},"4":{"name":"team5","hashed_password":"cny3jiqazap2riad"}},
+    "services": ["poipoi","sillybox","tattletale"]
 }
 END2
 
