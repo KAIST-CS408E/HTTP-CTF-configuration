@@ -11,6 +11,7 @@ Go to https://www.vagrantup.com/downloads.html and install Vagrant using proper 
 
 ```
 $ wget https://raw.githubusercontent.com/KAIST-CS408E/HTTP-CTF-configuration/master/gdown.pl\?token\=AQ4fCFft6ua68UHeVrSwGmaP2TYiGoQKks5bBnpEwA%3D%3D -O gdown.pl
+$ chmod 755 gdown.pl
 $ ./gdown.pl https://drive.google.com/file/d/1D2w5nSmDH2xcvAJ8xWbBoA4tuK9WgiXc/view package.box
 $ vagrant box add hobin/create-ctf-competition-template ./package.box
 ```
