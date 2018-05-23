@@ -121,6 +121,7 @@ tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
 DB_SECRET = '8qgq4c34i51gnm17'
 END2
+
 sudo tee /etc/gitlab/gitlab.rb << END2
 external_url 'http://localhost:5001'
 registry_external_url 'http://localhost:4567'
@@ -136,6 +137,12 @@ registry['notifications'] = [
     }
   }
 ]
+END2
+
+tee \$VAGRANT_HOME/HTTP-CTF/database/config/teamConfig.json << END2
+{
+    "teams": {"0":{"name":"team1","hashed_password":"h2pkp0gs9338kp1b"},"1":{"name":"team2","hashed_password":"1sx8yjkqz63stmgr"},"2":{"name":"team3","hashed_password":"h5t04gtxpsyzdzeo"},"3":{"name":"team4","hashed_password":"g8u5xgjp48fip42a"},"4":{"name":"team5","hashed_password":"cny3jiqazap2riad"}},
+}
 END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/gitlab/config.json << END2
