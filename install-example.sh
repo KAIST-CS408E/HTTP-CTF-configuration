@@ -170,12 +170,12 @@ sudo docker login --username=root --password=temp_passwd localhost:5000
 sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass http8804
 
 cd \$VAGRANT_HOME/HTTP-CTF/database
-nohup sudo python database_tornado.py &
-nohup sudo python gamebot.py &
+nohup sudo python database_tornado.py> database_tornado.log &
+nohup sudo python gamebot.py > gamebot.log &
 cd \$VAGRANT_HOME/HTTP-CTF/dashboard
-nohup sudo python app.py &
+nohup sudo python app.py > app.log &
 cd \$VAGRANT_HOME/HTTP-CTF/scorebot
-nohup sudo python scorebot.py &
+nohup sudo python scorebot.py > scorebot.log &
 END
 
 # Load vagrant box
