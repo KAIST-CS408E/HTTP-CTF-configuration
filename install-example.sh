@@ -191,9 +191,12 @@ sudo python push_containers.py -sl ../services -c example.json -ds localhost -dp
 
 cd \$VAGRANT_HOME/HTTP-CTF/database
 nohup sudo python database_tornado.py &
+sleep 30
 nohup sudo python gamebot.py &
+sleep 30
 cd \$VAGRANT_HOME/HTTP-CTF/dashboard
 nohup sudo python app.py &
+sleep 30
 cd \$VAGRANT_HOME/HTTP-CTF/scorebot
 nohup sudo python scorebot.py &
 END
