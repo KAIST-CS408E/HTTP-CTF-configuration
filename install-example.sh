@@ -29,7 +29,7 @@ END
 tee vagrant-install.sh << END
 export VAGRANT_HOME=/home/vagrant
 
-sudo git clone https://github.com/KAIST-CS408E/HTTP-CTF.git && cd HTTP-CTF && sudo git checkout http-to-https && cd ..
+git clone https://github.com/KAIST-CS408E/HTTP-CTF.git
 sudo mv \$VAGRANT_HOME/services \$VAGRANT_HOME/HTTP-CTF/services
 pip install -r \$VAGRANT_HOME/HTTP-CTF/dashboard/requirements.txt
 
