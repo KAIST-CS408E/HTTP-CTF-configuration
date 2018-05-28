@@ -65,10 +65,10 @@ END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/dashboard/config/teamConfig.json << END2
 {
-    "api_secret": "2k86i9tdq4wiqkud",
+    "api_secret": "rmg7ya6hgwwayoam",
     "name": "CS408(E)_HTTP_CTF",
     "api_base_url": "http://127.0.0.1:4000",
-    "teams": {"0":{"name":"team1","hashed_password":"fqz32m587srwizna"},"1":{"name":"team2","hashed_password":"j8yim9wkxk3yyii0"}}
+    "teams": {"0":{"name":"team1","hashed_password":"iscortxmlga8hycn"},"1":{"name":"team2","hashed_password":"huz7b6zamzfwngwr"}}
 }
 END2
 
@@ -105,21 +105,21 @@ tee \$VAGRANT_HOME/HTTP-CTF/database/settings.py << END2
 DEBUG = True
 MYSQL_DATABASE_USER = "root"
 MYSQL_DATABASE_INIT_PASSWORD = "http8804"
-MYSQL_DATABASE_PASSWORD = "1npzse91uiyc1guo"
+MYSQL_DATABASE_PASSWORD = "6smpfuc30x3qz9mq"
 MYSQL_DATABASE_DB = "ctf"
 DOCKER_DISTRIBUTION_SERVER = "localhost:5000"
 DOCKER_DISTRIBUTION_USER = "root"
-DOCKER_DISTRIBUTION_PASS = "http8804"
+DOCKER_DISTRIBUTION_PASS = "ize0db00yqm73z8a"
 DOCKER_DISTRIBUTION_EMAIL = "hobincar@kaist.ac.kr"
 REMOTE_DOCKER_DAEMON_PORT = 2375
 TICK_TIME_IN_SECONDS = 600
-DB_SECRET = "2k86i9tdq4wiqkud"
+DB_SECRET = "rmg7ya6hgwwayoam"
 GAME_ROUND = 20
 END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/scorebot/settings.py << END2
 DB_HOST = '127.0.0.1:4000'
-DB_SECRET = '2k86i9tdq4wiqkud'
+DB_SECRET = 'rmg7ya6hgwwayoam'
 END2
 sudo tee /etc/gitlab/gitlab.rb << END2
 external_url 'https://awesome-ctf.tk:15001'
@@ -132,7 +132,7 @@ registry['notifications'] = [
     'threshold' => 5,
     'backoff' => '2s',
     'headers' => {
-      'secret' => ['2k86i9tdq4wiqkud']
+      'secret' => ['rmg7ya6hgwwayoam']
     }
   }
 ]
@@ -140,13 +140,24 @@ END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/database/config/teamConfig.json << END2
 {
-    "teams": {"0":{"name":"team1","hashed_password":"fqz32m587srwizna"},"1":{"name":"team2","hashed_password":"j8yim9wkxk3yyii0"}}
+    "teams": {"0":{"name":"team1","hashed_password":"iscortxmlga8hycn"},"1":{"name":"team2","hashed_password":"huz7b6zamzfwngwr"}}
 }
+END2
+
+tee \$VAGRANT_HOME/HTTP-CTF/gitlab/setting.py << END2
+DOCKER_DISTRIBUTION_PASSWORD = 'ize0db00yqm73z8a'
+END2
+
+tee \$VAGRANT_HOME/HTTP-CTF/gitlab/gitlab-temp-passwd.sh << END2
+user = User.where(id: 1).first
+user.password = 'ize0db00yqm73z8a'
+user.password_confirmation = 'ize0db00yqm73z8a'
+user.save!
 END2
 
 tee \$VAGRANT_HOME/HTTP-CTF/gitlab/config.json << END2
 {
-    "teams": {"0":{"name":"team1","hashed_password":"fqz32m587srwizna"},"1":{"name":"team2","hashed_password":"j8yim9wkxk3yyii0"}},
+    "teams": {"0":{"name":"team1","hashed_password":"iscortxmlga8hycn"},"1":{"name":"team2","hashed_password":"huz7b6zamzfwngwr"}},
     "services": ["poipoi","sillybox","tattletale"]
 }
 END2
@@ -186,19 +197,22 @@ sudo docker run -d -p 5000:5000 --restart=always --name docker-registry \
   -e REGISTRY_HTTP_TLS_KEY=/certs/awesome-ctf.tk.key \
   registry
 sudo service docker restart
-sudo docker login --username=root --password=temp_passwd localhost:5000
-sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass temp_passwd
+sudo docker login --username=root --password=ize0db00yqm73z8a localhost:5000
+sudo python push_containers.py -sl ../services -c example.json -ds localhost -dpo 5000 -du root -dpass ize0db00yqm73z8a
 
+sudo mkdir \$VAGRANT_HOME/HTTP-CTF/logs
 cd \$VAGRANT_HOME/HTTP-CTF/database
-nohup sudo python database_tornado.py &
-sleep 30
-nohup sudo python gamebot.py &
-sleep 30
+nohup sudo python database_tornado.py > \$VAGRANT_HOME/HTTP-CTF/logs/database.out &
+sleep 60
+nohup sudo python gamebot.py > \$VAGRANT_HOME/HTTP-CTF/logs/gamebot.out &
+sleep 60
 cd \$VAGRANT_HOME/HTTP-CTF/dashboard
-nohup sudo python app.py &
-sleep 30
+nohup sudo python app.py > \$VAGRANT_HOME/HTTP-CTF/logs/app.out &
+sleep 60
 cd \$VAGRANT_HOME/HTTP-CTF/scorebot
-nohup sudo python scorebot.py &
+nohup sudo python scorebot.py > \$VAGRANT_HOME/HTTP-CTF/logs/scorebot.out &
+
+sudo service docker restart
 END
 
 
@@ -208,4 +222,3 @@ vagrant up
 
 # Connect to the vagrant box. You should connected to it to forward ports.
 vagrant ssh
-
