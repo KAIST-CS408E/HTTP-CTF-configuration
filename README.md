@@ -46,3 +46,7 @@ $ sh install.sh
 ```
 
 After a few minutes, the configuration is done and you can go to localhost:18000 to see your CTF homepage
+
+# License
+
+MIT © [hobincar](https://github.com/hobincar)
